@@ -4,8 +4,11 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
+    "dev": "vite",
     "build": "vite build",
-    "dev": "vite"
+    "preview": "vite preview",
+    "render-build": "npm install && npm run build && cd backend && npm install",
+    "start": "cd backend && npm start"
   },
   "dependencies": {
     "@popperjs/core": "2.11.8",
@@ -40,6 +43,7 @@
     "cmdk": "1.1.1",
     "date-fns": "3.6.0",
     "embla-carousel-react": "8.6.0",
+    "gsap": "^3.14.2",
     "input-otp": "1.4.2",
     "lucide-react": "0.487.0",
     "motion": "12.23.24",
@@ -53,14 +57,18 @@
     "recharts": "2.15.2",
     "sonner": "2.0.3",
     "tailwind-merge": "3.2.0",
+    "three": "^0.183.2",
     "tw-animate-css": "1.3.8",
+    "typed.js": "^3.0.0",
     "vaul": "1.1.2"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.12",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "4.7.0",
     "tailwindcss": "4.1.12",
-    "vite": "6.3.5"
+    "vite": "^6.3.5"
   },
   "peerDependencies": {
     "react": "18.3.1",
