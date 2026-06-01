@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
-    "build": "echo 'No build step required for backend'"
+    "dev": "node --watch server.js"
   },
   "keywords": [],
   "author": "",

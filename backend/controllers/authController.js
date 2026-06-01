@@ -11,32 +11,6 @@ const generateToken = (userId) => {
   });
 };
 
-// Detect production: NODE_ENV=production OR a custom FRONTEND_URL is configured (e.g. on Render)
-const isProduction = () =>
-  process.env.NODE_ENV === 'production' || !!process.env.FRONTEND_URL;
-
-// Helper to set auth cookie consistently across environments
-const setAuthCookie = (res, token) => {
-  const prod = isProduction();
-  res.cookie('jwt', token, {
-    httpOnly: true,
-    secure: prod,                         // HTTPS required for sameSite:none
-    sameSite: prod ? 'none' : 'strict',   // 'none' is required for cross-domain cookies
-    maxAge: 7 * 24 * 60 * 60 * 1000      // 7 days
-  });
-};
-
-// Helper to clear auth cookie with matching attributes
-const clearAuthCookie = (res) => {
-  const prod = isProduction();
-  res.cookie('jwt', '', {
-    httpOnly: true,
-    secure: prod,
-    sameSite: prod ? 'none' : 'strict',
-    expires: new Date(0)
-  });
-};
-
 export const signup = async (req, res) => {
   try {
     const { email, password, fullName, usn, branch, sem } = req.body;
@@ -56,7 +30,12 @@ export const signup = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    setAuthCookie(res, token);
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
 
     // Dispatch Welcome Email via Brevo API
     try {
@@ -134,7 +113,12 @@ export const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
-    setAuthCookie(res, token);
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
 
     res.status(200).json({ message: 'Login successful', user: { email: user.email, role: user.role } });
   } catch (error) {
@@ -143,7 +127,10 @@ export const login = async (req, res) => {
 };
 
 export const logout = (req, res) => {
-  clearAuthCookie(res);
+  res.cookie('jwt', '', {
+    httpOnly: true,
+    expires: new Date(0)
+  });
   res.status(200).json({ message: 'Logged out successfully' });
 };
 
