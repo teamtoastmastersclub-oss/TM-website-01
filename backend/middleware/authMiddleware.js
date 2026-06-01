@@ -7,7 +7,14 @@ export const protect = async (req, res, next) => {
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
-      req.user = await User.findById(decoded.id).select('-password');
+      const user = await User.findById(decoded.id).select('-password');
+      if (!user) {
+        return res.status(401).json({ message: 'Not authorized, user not found' });
+      }
+      if (user.isSuspended) {
+        return res.status(403).json({ message: 'Account is suspended by administrator.' });
+      }
+      req.user = user;
       next();
     } catch (error) {
       console.error(error);
